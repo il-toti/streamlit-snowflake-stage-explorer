@@ -1,6 +1,5 @@
 import streamlit as st
 import snowflake.connector
-from snowflake.connector import DictCursor
 
 from datetime import datetime
 import math
@@ -31,7 +30,7 @@ def convert_size_byte(size_bytes):
 # Run a sql query and return a dict
 @st.cache_data(ttl=3600)
 def run_query_dict(query):
-    with session.cursor(DictCursor) as cur:
+    with session.cursor(snowflake.connector.DictCursor) as cur:
         try:
             cur.execute(query)
             return cur.fetchall()
@@ -45,7 +44,7 @@ def run_query_dict(query):
 # Run a sql query and return a dict
 @st.cache_data(ttl=3600)
 def run_query_dict_error(query):
-    with session.cursor(DictCursor) as cur:
+    with session.cursor(snowflake.connector.DictCursor) as cur:
         try:
             cur.execute(query)
             return cur.fetchall()
@@ -129,6 +128,8 @@ for d in internal_stages_usage_sorted:
     internal_stages_usage_tight.append(dd)
 
 # Show the overall usage
+st.write("Stages:")
 st.dataframe(internal_stages_usage_tight, use_container_width=True)
 # Show the dataframe
+st.write("Files across your internal stages:")
 st.dataframe(all_stages_list_tight, use_container_width=True)

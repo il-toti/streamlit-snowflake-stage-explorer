@@ -240,14 +240,15 @@ for d in data_list_filtered:
     data_list_tight.append(dd)
 
 # Show the list of the stage files
+tab_files.write("Files on your stage:")
 tab_files.dataframe(data_list_tight, use_container_width=True)
 
 # -- Choose and Download a file
 columns_manage_files = tab_files.columns(2)
 form_manage_files = columns_manage_files[0].form("file_form", clear_on_submit=False)
 form_manage_files.write("Manage file:")
-a = [ d["name"] for d in data_list_filtered ]
-a.append("Choose")
+
+a = ["Choose"] + [ d["name"] for d in data_list_filtered ]
 option_dl_file = form_manage_files.selectbox(
         "Download a file:",
         a,
@@ -263,7 +264,7 @@ else:
     submit_confirm = columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
 
 # -- Upload a file
-uploaded_file = columns_manage_files[1].file_uploader("Upload file to stage:", on_change=clear_cache)
+uploaded_file = columns_manage_files[1].file_uploader("Upload file to this stage:", on_change=clear_cache)
 if uploaded_file is not None:
     upload_file(uploaded_file)
 
