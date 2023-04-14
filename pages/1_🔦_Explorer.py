@@ -79,6 +79,7 @@ def download_button(object_to_download, download_filename):
 
 # Download a file from stage
 def download_from_stage():
+    print(os.listdir("./tmp/"))
     # Get the pure filename and the filename with full stage path
     filename_with_path = st.session_state.file
 
@@ -102,6 +103,7 @@ def download_from_stage():
         cur.execute(sql)
     #  Open the local file and send it to the browser
     f = open(f"./tmp/{filename}", "rb")
+    print(os.listdir("./tmp/"))
     components.html(
         download_button(f.read(), filename),
         height=0,
