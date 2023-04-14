@@ -105,6 +105,7 @@ def download_from_stage():
     f = open(f"./tmp/{filename}", "rb")
     print(os.listdir("./tmp/"))
     st.write(os.listdir("./tmp/"))
+    st.write(f)
     components.html(
         download_button(f.read(), filename),
         height=0,
