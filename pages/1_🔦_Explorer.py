@@ -1,57 +1,18 @@
 import streamlit as st
-import snowflake.connector
 from snowflake.connector import DictCursor
 
 import common.sidebar as sb
+import common.db as db
+import common.utils as ut
 
-import pandas as pd
 from datetime import datetime
-import math
 import streamlit.components.v1 as components
 import base64
 import os
+from pathlib import Path
 
 # -----------------------------------------------
-# Helper functions
-
-# Initialize connection.
-# Uses st.cache_resource to only run once.
-@st.cache_resource
-def init_connection():
-    return snowflake.connector.connect(
-        **st.secrets["snowflake"], client_session_keep_alive=True
-    )
-
-
-# Convert byte to KB, MB,...
-def convert_size_byte(size_bytes):
-   if size_bytes == 0:
-       return "0 B"
-   size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-   i = int(math.floor(math.log(size_bytes, 1024)))
-   p = math.pow(1024, i)
-   s = round(size_bytes / p, 2)
-   return "%s %s" % (s, size_name[i])
-
-
-# Run a sql query and return a dict
-@st.cache_data(ttl=3600)
-def run_query_dict(query):
-    with session.cursor(DictCursor) as cur:
-        try:
-            cur.execute(query)
-            return cur.fetchall()
-        except snowflake.connector.errors.ProgrammingError as e:
-            st.error(str(e) + query, icon="🚨")
-            st.warning('SQL query = "' + query +'"')
-        finally:
-            cur.close()
-
-
-# Clear the cache
-def clear_cache():
-    st.cache_data.clear()
-
+# Helper functions for this page
 
 # Remove a file from stage
 def remove_from_stage():
@@ -68,9 +29,8 @@ def remove_from_stage():
 
         if sql:
             # st.warning(sql)
-            with session.cursor(DictCursor) as cur:
-                cur.execute(sql)
-            st.cache_data.clear()
+            db.run_query_dict(session, sql)
+            ut.clear_cache()
             st.session_state.remove_file_confirm = False
     else:
         st.error("To remove the file you have to check the confirmation checkbox!")
@@ -119,15 +79,34 @@ def download_button(object_to_download, download_filename):
 
 # Download a file from stage
 def download_from_stage():
+    # Get the pure filename and the filename with full stage path
     filename_with_path = st.session_state.file
-    filename = os.path.basename(filename_with_path)
+
+    if selected_stage_type == "USER'S":
+        filename = os.path.basename(filename_with_path)
+        sql = f"GET @~/{filename_with_path} file://./tmp"
+    elif selected_stage_type == "INTERNAL":
+        filename = os.path.basename(filename_with_path)
+        # remove the first part, which is exactly the stage name
+        filename_with_path = filename_with_path[filename_with_path.find("/")+1:]
+        print(f"filename={filename}")
+        print(f"filename_with_path={filename_with_path}")
+        sql = f"GET \'@{selected_stage}/{filename_with_path}\' file://./tmp"
+    else:
+            sql = ""
+
+    # Create the local tmp dir if it does not exist
+    Path("./tmp/").mkdir(parents=True, exist_ok=True)
+    # Get (copy) the file from our Snowflake stage
     with session.cursor(DictCursor) as cur:
-        cur.execute(f"GET @~/{filename_with_path} file://./tmp")
+        cur.execute(sql)
+    #  Open the local file and send it to the browser
     f = open(f"./tmp/{filename}", "rb")
     components.html(
         download_button(f.read(), filename),
         height=0,
     )
+
 
 # Upload file to stage
 def upload_file_to_stage(uploaded_file):
@@ -140,12 +119,12 @@ def upload_file_to_stage(uploaded_file):
 # -----------------------------------------------
 # App starts here
 st.set_page_config(page_title="ILSFAPP", layout="wide")
-session = init_connection()
+session = db.init_connection()
 st.title('Stage explorer')
 sb.info_panel()
 
 # Get all the stages under this account
-data_stages = run_query_dict('show stages in account')
+data_stages = db.run_query_dict(session, 'show stages in account')
 
 # If you need the raw data...
 # expand_stages = st.expander("Stages raw table")
@@ -202,13 +181,13 @@ if selected_stage_type == "EXTERNAL":
               )
 
 # Get the files on the choosen stage
-data_list = run_query_dict(f'ls \'@{selected_stage}\'')
+data_list = db.run_query_dict(session, f'ls \'@{selected_stage}\'')
 
 # Show the checkboxes
 list_params_col1, list_params_col2 = tab_files.columns(2)
 if list_params_col1.button("Refresh"):
     # clear the whole cache
-    clear_cache()
+    ut.clear_cache()
 
 if selected_stage_type == "USER'S":
     show_worksheet_data = list_params_col2.checkbox('Hide worksheet_data* entries', value=True)
@@ -230,7 +209,7 @@ data_list_tight = []
 for d in data_list_filtered:
     dd = {}
     dd["File name"] = d["name"]
-    dd["File size"] = convert_size_byte(d["size"])
+    dd["File size"] = ut.convert_size_byte(d["size"])
     dd["Last modified"] = datetime. strptime(d["last_modified"], '%a, %d %b %Y %H:%M:%S %Z').strftime("%Y-%m-%d %H:%M:%S")
     data_list_tight.append(dd)
 
@@ -240,35 +219,34 @@ tab_files.dataframe(data_list_tight, use_container_width=True)
 
 # -- Choose and Download a file
 columns_manage_files = tab_files.columns(2)
-form_manage_files = columns_manage_files[0].form("file_form", clear_on_submit=False)
-form_manage_files.write("Manage file:")
-
-a = ["Choose"] + [ d["name"] for d in data_list_filtered ]
-option_dl_file = form_manage_files.selectbox(
-        "Download a file:",
-        a,
-        label_visibility = "collapsed",
-        key="file",
-    )
-columns_dlrm_files = form_manage_files.columns([1,2])
-submit = columns_dlrm_files[0].form_submit_button("Download file", on_click=download_from_stage)
 if selected_stage_type == "EXTERNAL":
-    columns_dlrm_files[1].caption("Remove file is not available on external stages.")
+    columns_manage_files[0].info("Downloading or removing file is not available on external stages!")
 else:
+    form_manage_files = columns_manage_files[0].form("file_form", clear_on_submit=False)
+    form_manage_files.write("Manage file:")
+
+    option_dl_file = form_manage_files.selectbox(
+            "Download a file:",
+            [ d["name"] for d in data_list_filtered ],
+            label_visibility = "collapsed",
+            key="file",
+        )
+    columns_dlrm_files = form_manage_files.columns([1,2])
+    submit = columns_dlrm_files[0].form_submit_button("Download file", on_click=download_from_stage)
     submit = columns_dlrm_files[1].form_submit_button("Remove file", on_click=remove_from_stage)
     submit_confirm = columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
 
 # -- Upload a file
 cont = columns_manage_files[1].container()
-uploaded_file = cont.file_uploader("Upload file to this stage:", on_change=clear_cache)
+uploaded_file = cont.file_uploader("Upload file to this stage:", on_change=ut.clear_cache)
 if uploaded_file is not None:
     upload_file_to_stage(uploaded_file)
 
 # -- Integration tab
 # Show the integration details
 if selected_stage_type == "EXTERNAL":
-    data_integration = run_query_dict("show storage integrations like '{integration}'".format(integration=str(data_selected_stage["storage_integration"])))
-    data_integration_desc = run_query_dict("desc storage integration {integration}".format(integration=str(data_selected_stage["storage_integration"])))
+    data_integration = db.run_query_dict(session, "show storage integrations like '{integration}'".format(integration=str(data_selected_stage["storage_integration"])))
+    data_integration_desc = db.run_query_dict(session, "desc storage integration {integration}".format(integration=str(data_selected_stage["storage_integration"])))
     tab_integration.dataframe(data_integration)
     tab_integration.dataframe(data_integration_desc)
 else:
