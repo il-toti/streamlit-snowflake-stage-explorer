@@ -2,7 +2,7 @@ import streamlit as st
 import snowflake.connector
 from snowflake.connector import DictCursor
 
-import stage_inspector.sidebar as sb
+import common.sidebar as sb
 
 import pandas as pd
 from datetime import datetime

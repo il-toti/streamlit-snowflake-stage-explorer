@@ -1,7 +1,7 @@
 import streamlit as st
 import snowflake.connector
 
-import stage_inspector.sidebar as sb
+import common.sidebar as sb
 
 from datetime import datetime
 import math

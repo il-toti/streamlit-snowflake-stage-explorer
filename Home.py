@@ -1,5 +1,5 @@
 import streamlit as st
-import stage_inspector.sidebar as sb
+import common.sidebar as sb
 
 # Page config params
 st.set_page_config(
