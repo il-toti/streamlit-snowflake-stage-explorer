@@ -1,4 +1,5 @@
 import streamlit as st
+import stage_inspector.sidebar as sb
 
 # Page config params
 st.set_page_config(
@@ -8,8 +9,7 @@ st.set_page_config(
 )
 
 # Sidebar info panels
-st.sidebar.info("[GitHub](https://github.com/il-toti/streamlit-snowflake-stage-explorer)", icon="💻")
-st.sidebar.info("[We are Infinite Lambda](https://infinitelambda.com/)", icon="👩🏻‍💻")
+sb.info_panel()
 
 # Hone page body
 st.title("Snowflake Stage Inspector")

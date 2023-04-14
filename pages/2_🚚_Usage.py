@@ -1,6 +1,8 @@
 import streamlit as st
 import snowflake.connector
 
+import stage_inspector.sidebar as sb
+
 from datetime import datetime
 import math
 
@@ -59,7 +61,7 @@ def run_query_dict_error(query):
 st.set_page_config(page_title="ILSFAPP", layout="wide")
 session = init_connection()
 st.title('Stage usage')
-st.sidebar.header("Stage usage")
+sb.info_panel()
 
 # Get all the stages under this account
 data_stages = run_query_dict('show stages in account')

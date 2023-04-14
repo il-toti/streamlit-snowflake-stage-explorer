@@ -2,6 +2,8 @@ import streamlit as st
 import snowflake.connector
 from snowflake.connector import DictCursor
 
+import stage_inspector.sidebar as sb
+
 import pandas as pd
 from datetime import datetime
 import math
@@ -140,7 +142,7 @@ def upload_file(uploaded_file):
 st.set_page_config(page_title="ILSFAPP", layout="wide")
 session = init_connection()
 st.title('Stage explorer')
-st.sidebar.header("Stage explorer")
+sb.info_panel()
 
 # Get all the stages under this account
 data_stages = run_query_dict('show stages in account')
