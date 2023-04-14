@@ -237,6 +237,14 @@ else:
         )
     columns_dlrm_files = form_manage_files.columns([1,2])
     submit = columns_dlrm_files[0].form_submit_button("Download file", on_click=download_from_stage)
+
+    f = open(f"./tmp/sis_test1.py", "rb")
+    st.download_button(
+                        label="Download",
+                        data=f,
+                        file_name="sis_test1.py",
+                       )
+
     submit = columns_dlrm_files[1].form_submit_button("Remove file", on_click=remove_from_stage)
     submit_confirm = columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
 
