@@ -130,7 +130,7 @@ def download_from_stage():
     )
 
 # Upload file to stage
-def upload_file(uploaded_file):
+def upload_file_to_stage(uploaded_file):
     # st.write("uploaded_file.name=", uploaded_file.name)
     print(selected_stage)
     with session.cursor(DictCursor) as cur:
@@ -262,7 +262,7 @@ else:
 cont = columns_manage_files[1].container()
 uploaded_file = cont.file_uploader("Upload file to this stage:", on_change=clear_cache)
 if uploaded_file is not None:
-    upload_file(uploaded_file)
+    upload_file_to_stage(uploaded_file)
 
 # -- Integration tab
 # Show the integration details
