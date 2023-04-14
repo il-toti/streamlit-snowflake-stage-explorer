@@ -104,6 +104,7 @@ def download_from_stage():
     #  Open the local file and send it to the browser
     f = open(f"./tmp/{filename}", "rb")
     print(os.listdir("./tmp/"))
+    st.write(os.listdir("./tmp/"))
     components.html(
         download_button(f.read(), filename),
         height=0,
