@@ -142,20 +142,6 @@ session = init_connection()
 st.title('Stage explorer')
 st.sidebar.header("Stage explorer")
 
-# css = r'''
-#     <style>
-#         [data-testid="stForm"] {border: 0px}
-#     </style>
-# '''
-# st.markdown(css, unsafe_allow_html=True)
-
-css = r'''
-    <style>
-        .block-container {border: 4px}
-    </style>
-'''
-st.markdown(css, unsafe_allow_html=True)
-
 # Get all the stages under this account
 data_stages = run_query_dict('show stages in account')
 
