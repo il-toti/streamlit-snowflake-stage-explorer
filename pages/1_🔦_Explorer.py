@@ -142,9 +142,16 @@ session = init_connection()
 st.title('Stage explorer')
 st.sidebar.header("Stage explorer")
 
+# css = r'''
+#     <style>
+#         [data-testid="stForm"] {border: 0px}
+#     </style>
+# '''
+# st.markdown(css, unsafe_allow_html=True)
+
 css = r'''
     <style>
-        [data-testid="stForm"] {border: 0px}
+        .block-container {border: 4px}
     </style>
 '''
 st.markdown(css, unsafe_allow_html=True)
@@ -264,7 +271,8 @@ else:
     submit_confirm = columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
 
 # -- Upload a file
-uploaded_file = columns_manage_files[1].file_uploader("Upload file to this stage:", on_change=clear_cache)
+cont = columns_manage_files[1].container()
+uploaded_file = cont.file_uploader("Upload file to this stage:", on_change=clear_cache)
 if uploaded_file is not None:
     upload_file(uploaded_file)
 
