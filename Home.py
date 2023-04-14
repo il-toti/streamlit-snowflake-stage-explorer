@@ -1,17 +1,18 @@
 import streamlit as st
 
+# Page config params
 st.set_page_config(
     page_title="Snowflake Stage Inspector",
     page_icon="🔬",
     layout="wide",
 )
 
-st.title("Snowflake Stage Inspector")
-
+# Sidebar info panels
 st.sidebar.info("[GitHub](https://github.com/il-toti/streamlit-snowflake-stage-explorer)", icon="💻")
 st.sidebar.info("[We are Infinite Lambda](https://infinitelambda.com/)", icon="👩🏻‍💻")
 
-
+# Hone page body
+st.title("Snowflake Stage Inspector")
 st.markdown(
     """
     🔬Stage Inspector helps you to analyse your ❄️Snowflake internal and external stages.
