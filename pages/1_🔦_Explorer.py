@@ -15,8 +15,7 @@ from pathlib import Path
 # Helper functions for this page
 
 # Remove a file from stage
-def remove_from_stage():
-    filename_with_path = st.session_state.file
+def remove_from_stage(filename_with_path):
     if st.session_state.remove_file_confirm:
         if selected_stage_type == "USER'S":
             sql = f'REMOVE \'@{selected_stage}/{filename_with_path}\''
@@ -30,59 +29,16 @@ def remove_from_stage():
         if sql:
             # st.warning(sql)
             db.run_query_dict(session, sql)
-            ut.clear_cache()
-            st.session_state.remove_file_confirm = False
+            del st.session_state.remove_file_confirm
+            st.cache_data.clear()
+            st.experimental_rerun()
+            # st.success('Successfully removed! Please refresh the list!', icon="🔄")
     else:
-        st.error("To remove the file you have to check the confirmation checkbox!")
-
-
-# Generate a download button to the page
-# Solution Source: https://discuss.streamlit.io/t/automatic-download-select-and-download-file-with-single-button-click/15141/4
-def download_button(object_to_download, download_filename):
-    """
-    Generates a link to download the given object_to_download.
-    Params:
-    ------
-    object_to_download:  The object to be downloaded.
-    download_filename (str): filename and extension of file. e.g. mydata.csv,
-    Returns:
-    -------
-    (str): the anchor tag to download object_to_download
-    """
-    # if isinstance(object_to_download, pd.DataFrame):
-    #     object_to_download = object_to_download.to_csv(index=False)
-
-    # # Try JSON encode for everything else
-    # else:
-    #     object_to_download = json.dumps(object_to_download)
-
-    try:
-        # some strings <-> bytes conversions necessary here
-        b64 = base64.b64encode(object_to_download.encode()).decode()
-
-    except AttributeError as e:
-        b64 = base64.b64encode(object_to_download).decode()
-
-    dl_link = f"""
-    <html>
-    <head>
-    <title>Start Auto Download file</title>
-    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script>
-    $('<a href="data:text/csv;base64,{b64}" download="{download_filename}">')[0].click()
-    </script>
-    </head>
-    </html>
-    """
-    return dl_link
+        st.error("To remove the file you have to check the confirmation checkbox!", icon="🚨")
 
 
 # Download a file from stage
-def download_from_stage():
-    print(os.listdir("./tmp/"))
-    # Get the pure filename and the filename with full stage path
-    filename_with_path = st.session_state.file
-
+def download_from_stage(filename_with_path):
     if selected_stage_type == "USER'S":
         filename = os.path.basename(filename_with_path)
         sql = f"GET @~/{filename_with_path} file://./tmp"
@@ -103,13 +59,9 @@ def download_from_stage():
         cur.execute(sql)
     #  Open the local file and send it to the browser
     f = open(f"./tmp/{filename}", "rb")
-    print(os.listdir("./tmp/"))
-    st.write(os.listdir("./tmp/"))
-    st.write(f)
-    components.html(
-        download_button(f.read(), filename),
-        height=0,
-    )
+
+    return f, filename
+
 
 
 # Upload file to stage
@@ -118,6 +70,7 @@ def upload_file_to_stage(uploaded_file):
     print(selected_stage)
     with session.cursor(DictCursor) as cur:
         cur.execute(f'PUT file://this_directory_path/is_ignored/{uploaded_file.name} \'@{selected_stage}\'', file_stream=uploaded_file)
+    st.success('Successfully uploaded! Please refresh the list!', icon="🔄")
 
 
 # -----------------------------------------------
@@ -191,7 +144,9 @@ data_list = db.run_query_dict(session, f'ls \'@{selected_stage}\'')
 list_params_col1, list_params_col2 = tab_files.columns(2)
 if list_params_col1.button("Refresh"):
     # clear the whole cache
-    ut.clear_cache()
+    # ut.clear_cache()
+    st.cache_data.clear()
+    st.experimental_rerun()
 
 if selected_stage_type == "USER'S":
     show_worksheet_data = list_params_col2.checkbox('Hide worksheet_data* entries', value=True)
@@ -226,27 +181,27 @@ columns_manage_files = tab_files.columns(2)
 if selected_stage_type == "EXTERNAL":
     columns_manage_files[0].info("Downloading or removing file is not available on external stages!")
 else:
-    form_manage_files = columns_manage_files[0].form("file_form", clear_on_submit=False)
-    form_manage_files.write("Manage file:")
-
-    option_dl_file = form_manage_files.selectbox(
+    columns_manage_files[0].write("Manage file:")
+    
+    option_dl_file = columns_manage_files[0].selectbox(
             "Download a file:",
             [ d["name"] for d in data_list_filtered ],
             label_visibility = "collapsed",
             key="file",
         )
-    columns_dlrm_files = form_manage_files.columns([1,2])
-    submit = columns_dlrm_files[0].form_submit_button("Download file", on_click=download_from_stage)
-
-    f = open(f"./tmp/sis_test1.py", "rb")
-    st.download_button(
+    
+    columns_dlrm_files = columns_manage_files[0].columns([1,2])
+    f, filename = download_from_stage(option_dl_file)
+    columns_dlrm_files[0].download_button(
                         label="Download",
                         data=f,
-                        file_name="sis_test1.py",
+                        file_name=filename,
                        )
 
-    submit = columns_dlrm_files[1].form_submit_button("Remove file", on_click=remove_from_stage)
-    submit_confirm = columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
+    button_remove_file = columns_dlrm_files[1].button("Remove file")
+    columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
+    if button_remove_file:
+        remove_from_stage(option_dl_file)
 
 # -- Upload a file
 cont = columns_manage_files[1].container()
