@@ -29,7 +29,6 @@ def remove_from_stage(filename_with_path):
         if sql:
             # st.warning(sql)
             db.run_query_dict(session, sql)
-            del st.session_state.remove_file_confirm
             st.cache_data.clear()
             st.experimental_rerun()
             # st.success('Successfully removed! Please refresh the list!', icon="🔄")
@@ -70,7 +69,7 @@ def upload_file_to_stage(uploaded_file):
     print(selected_stage)
     with session.cursor(DictCursor) as cur:
         cur.execute(f'PUT file://this_directory_path/is_ignored/{uploaded_file.name} \'@{selected_stage}\'', file_stream=uploaded_file)
-    st.success('Successfully uploaded! Please refresh the list!', icon="🔄")
+    st.success('Successfully uploaded! To refresh the list please click the X of the uploaded file.', icon="🔄")
 
 
 # -----------------------------------------------
@@ -144,7 +143,8 @@ data_list = db.run_query_dict(session, f'ls \'@{selected_stage}\'')
 list_params_col1, list_params_col2 = tab_files.columns(2)
 if list_params_col1.button("Refresh"):
     # clear the whole cache
-    # ut.clear_cache()
+    if st.session_state.get("remove_file_confirm"):
+        st.session_state["remove_file_confirm"] = False
     st.cache_data.clear()
     st.experimental_rerun()
 
@@ -202,10 +202,12 @@ else:
     columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
     if button_remove_file:
         remove_from_stage(option_dl_file)
+        if st.session_state.get("remove_file_confirm"):
+            st.session_state["remove_file_confirm"] = False
 
 # -- Upload a file
 cont = columns_manage_files[1].container()
-uploaded_file = cont.file_uploader("Upload file to this stage:", on_change=ut.clear_cache)
+uploaded_file = cont.file_uploader("Upload new file to this stage:", on_change=ut.clear_cache)
 if uploaded_file is not None:
     upload_file_to_stage(uploaded_file)
 
