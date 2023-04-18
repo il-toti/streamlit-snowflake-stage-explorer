@@ -46,8 +46,10 @@ schema = "public"
 
 You can find more explanation in the [Streamlit documentation](https://docs.streamlit.io/streamlit-community-cloud/get-started/deploy-an-app/connect-to-data-sources/secrets-management).
 
-And now just sipmly run your Streamlit app:
-`streamlit run Home.py`
+And now you can simply run your Streamlit application:
+```
+streamlit run Home.py
+```
 
 
 ### About
