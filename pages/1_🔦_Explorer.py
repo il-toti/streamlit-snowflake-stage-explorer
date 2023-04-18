@@ -6,13 +6,11 @@ import common.db as db
 import common.utils as ut
 
 from datetime import datetime
-import streamlit.components.v1 as components
-import base64
 import os
 from pathlib import Path
 
 # -----------------------------------------------
-# Helper functions for this page
+# Helper functions specially for this page
 
 # Remove a file from stage
 def remove_from_stage(filename_with_path):
@@ -60,7 +58,6 @@ def download_from_stage(filename_with_path):
     f = open(f"./tmp/{filename}", "rb")
 
     return f, filename
-
 
 
 # Upload file to stage
@@ -176,7 +173,7 @@ for d in data_list_filtered:
 tab_files.write("Files on your stage:")
 tab_files.dataframe(data_list_tight, use_container_width=True)
 
-# -- Choose and Download a file
+# -- Choose and Download/Remove a file
 columns_manage_files = tab_files.columns(2)
 if selected_stage_type == "EXTERNAL":
     columns_manage_files[0].info("Downloading or removing file is not available on external stages!")
@@ -202,14 +199,13 @@ else:
     columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
     if button_remove_file:
         remove_from_stage(option_dl_file)
-        if st.session_state.get("remove_file_confirm"):
-            st.session_state["remove_file_confirm"] = False
 
 # -- Upload a file
 cont = columns_manage_files[1].container()
 uploaded_file = cont.file_uploader("Upload new file to this stage:", on_change=ut.clear_cache)
 if uploaded_file is not None:
     upload_file_to_stage(uploaded_file)
+
 
 # -- Integration tab
 # Show the integration details
