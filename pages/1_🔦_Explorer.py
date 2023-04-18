@@ -182,11 +182,12 @@ for d in data_list_filtered:
 tab_files.write("Files on your stage:")
 tab_files.dataframe(data_list_tight, use_container_width=True)
 
-# -- Choose and Download/Remove a file
-columns_manage_files = tab_files.columns(2)
+# Managing files
 if selected_stage_type == "EXTERNAL":
-    columns_manage_files[0].info("Downloading or removing file is not available on external stages!")
+    tab_files.info("Managing files is not available on external stages!")
 else:
+    # Choose and Download/Remove a file
+    columns_manage_files = tab_files.columns(2)
     columns_manage_files[0].write("Manage file:")
     
     option_dl_file = columns_manage_files[0].selectbox(
@@ -209,11 +210,11 @@ else:
     if button_remove_file:
         remove_from_stage(option_dl_file)
 
-# -- Upload a file
-cont = columns_manage_files[1].container()
-uploaded_file = cont.file_uploader("Upload new file to this stage:", on_change=ut.clear_cache)
-if uploaded_file is not None:
-    upload_file_to_stage(uploaded_file)
+    # Upload a file
+    cont = columns_manage_files[1].container()
+    uploaded_file = cont.file_uploader("Upload new file to this stage:", on_change=ut.clear_cache)
+    if uploaded_file is not None:
+        upload_file_to_stage(uploaded_file)
 
 
 # -- Integration tab
