@@ -29,5 +29,6 @@ st.markdown(
     
     You can check our [GitHub repository](https://github.com/il-toti/streamlit-snowflake-stage-explorer) or feel free to contact us!
     We are [Infinite Lambda](https://infinitelambda.com/).
+    Author: Gabor Toth.
 """
 )
