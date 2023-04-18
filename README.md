@@ -14,28 +14,29 @@ Stage Inspector helps you to analyse your Snowflake internal and external stages
 ### Usage
 - Overall size of your internal stages
 - Getting familiar your biggest files
-# Run this app locally
-This app based on the excellent Streamlit framework. Streamlit will install among the other packages in the requirement.txt.
+# Run this app
+This app based on the excellent Streamlit framework. 
+You can run it on the Streamlit Cloud 
 
 ## Create the virtual environment and install the packages
-So, first create your favorite virtual env and download the necessary packages:
-```
+So, first create your favorite virtual env and download the necessary packages. Streamlit will install among the other packages in the requirement.txt.
+```sh
 pip install -r requirements.txt
 ```
 ## Snowflake connection
 This app connects to a Snowflake account so you need to [create a trial Snowflake account](https://signup.snowflake.com/) if you want to test and don't have one yet.
 
 You need to create a special file for your secrets. You can put it under your home directory:
-```
+```sh
 ~/.streamlit/secrets.toml
 ```
 or create a folder/file in this project:
-```
+```sh
 ./.streamlit/secrets.toml
 ```
 
 The content should be something like this:
-```
+```toml
 [snowflake]
 user = "_your_snowflake_username_"
 password = "_your_snowflake_password_"
