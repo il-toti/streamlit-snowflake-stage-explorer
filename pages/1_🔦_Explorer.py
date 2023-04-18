@@ -74,7 +74,7 @@ def upload_file_to_stage(uploaded_file):
 def clear_checkbox_remove_file_confirm():
     if st.session_state.get("remove_file_confirm"):
         st.session_state["remove_file_confirm"] = False
-    st.session_state["remove_file_confirmed"] = True
+        st.session_state["remove_file_confirmed"] = True
 
 # -----------------------------------------------
 # App starts here
@@ -82,6 +82,8 @@ st.set_page_config(page_title="ILSFAPP", layout="wide")
 session = db.init_connection()
 st.title('Stage explorer')
 sb.info_panel()
+if "remove_file_confirmed" not in st.session_state:
+    st.session_state["remove_file_confirmed"] = False
 
 # Get all the stages under this account
 data_stages = db.run_query_dict(session, 'show stages in account')
