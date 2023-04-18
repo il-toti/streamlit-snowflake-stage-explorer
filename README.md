@@ -6,21 +6,23 @@
 # Snowflake Stage Inspector
 Stage Inspector helps you to analyse your Snowflake internal and external stages.
 
-## Explorer
+### Explorer
 - Surf through your stages, check the parameters
 - Get a list of files on your stages
 - Even you can manage your stage files: upload, download or remove them
 
-## Usage
+### Usage
 - Overall size of your internal stages
 - Getting familiar your biggest files
-### Run this app locally
+# Run this app locally
 This app based on the excellent Streamlit framework. Streamlit will install among the other packages in the requirement.txt.
+
+## Create the virtual environment and install the packages
 So, first create your favorite virtual env and download the necessary packages:
 ```
 pip install -r requirements.txt
 ```
-
+## Snowflake connection
 This app connects to a Snowflake account so you need to [create a trial Snowflake account](https://signup.snowflake.com/) if you want to test and don't have one yet.
 
 You need to create a special file for your secrets. You can put it under your home directory:
@@ -46,13 +48,14 @@ schema = "public"
 
 You can find more explanation in the [Streamlit documentation](https://docs.streamlit.io/streamlit-community-cloud/get-started/deploy-an-app/connect-to-data-sources/secrets-management).
 
+## Run your Streamlit locally
 And now you can simply run your Streamlit application:
 ```
 streamlit run Home.py
 ```
 
 
-### About
+# About
 We are [Infinite Lambda](https://infinitelambda.com/). 
 We are happy to help you, feel free to contact us!.
 Author: Gabor Toth.
