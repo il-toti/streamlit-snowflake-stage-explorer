@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Remove a file from stage
 def remove_from_stage(filename_with_path):
-    if st.session_state.remove_file_confirm:
+    if st.session_state.remove_file_confirmed:
         if selected_stage_type == "USER'S":
             sql = f'REMOVE \'@{selected_stage}/{filename_with_path}\''
         elif selected_stage_type == "INTERNAL":
@@ -27,6 +27,7 @@ def remove_from_stage(filename_with_path):
         if sql:
             # st.warning(sql)
             db.run_query_dict(session, sql)
+            st.session_state["remove_file_confirmed"] = False
             st.cache_data.clear()
             st.experimental_rerun()
             # st.success('Successfully removed! Please refresh the list!', icon="🔄")
@@ -68,6 +69,12 @@ def upload_file_to_stage(uploaded_file):
         cur.execute(f'PUT file://this_directory_path/is_ignored/{uploaded_file.name} \'@{selected_stage}\'', file_stream=uploaded_file)
     st.success('Successfully uploaded! To refresh the list please click the X of the uploaded file.', icon="🔄")
 
+
+# Clear the confirmation checkbox
+def clear_checkbox_remove_file_confirm():
+    if st.session_state.get("remove_file_confirm"):
+        st.session_state["remove_file_confirm"] = False
+    st.session_state["remove_file_confirmed"] = True
 
 # -----------------------------------------------
 # App starts here
@@ -195,7 +202,7 @@ else:
                         file_name=filename,
                        )
 
-    button_remove_file = columns_dlrm_files[1].button("Remove file")
+    button_remove_file = columns_dlrm_files[1].button("Remove file", on_click=clear_checkbox_remove_file_confirm)
     columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
     if button_remove_file:
         remove_from_stage(option_dl_file)
