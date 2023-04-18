@@ -13,6 +13,13 @@ def convert_size_byte(size_bytes):
    return "%s %s" % (s, size_name[i])
 
 
+# Clear the confirmation checkbox
+def clear_checkbox_remove_file_confirm():
+    if st.session_state.get("remove_file_confirm"):
+        st.session_state["remove_file_confirm"] = False
+        st.session_state["remove_file_confirmed"] = True
+
+
 # Clear the cache
 def clear_cache():
     st.cache_data.clear()
