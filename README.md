@@ -16,19 +16,19 @@ You have two pages:
 - Getting familiar your biggest files
 
 
-# Installation
+## Installation
 How can you run this app?
 This app based on the excellent [Streamlit framework](https://streamlit.io/).
 The best option is to run it on the [Streamlit Cloud](https://streamlit.io/cloud).
 
 If you rather choose to run it locally here is your guide.
 
-## Create the virtual environment and install the packages
+### Create the virtual environment and install the packages
 So, first create your favorite virtual env and download the necessary packages. Streamlit will install among the other packages in the requirement.txt.
 ```sh
 pip install -r requirements.txt
 ```
-## Snowflake connection
+### Snowflake connection
 This app connects to a Snowflake account so you need to [create a trial Snowflake account](https://signup.snowflake.com/) if you want to test and don't have one yet.
 
 You need to create a special file for your secrets. You can put it under your home directory:
@@ -54,17 +54,16 @@ schema = "public"
 
 You can find more explanation in the [Streamlit documentation](https://docs.streamlit.io/streamlit-community-cloud/get-started/deploy-an-app/connect-to-data-sources/secrets-management).
 
-## Run your Streamlit locally
+### Run your Streamlit locally
 And now you can simply run your Streamlit application:
 ```
 streamlit run Home.py
 ```
 
+## License
+The content of this site is licensed under the [Apache 2.0](https://choosealicense.com/licenses/apache-2.0/) License.
 
-# License
-
-
-# About Infinite Lambda
+## About Infinite Lambda
 Infinite Lambda is a cloud and data consultancy. We build strategies, help organisations implement them and pass on the expertise to look after the infrastructure.
 
 We are an Elite Snowflake Partner, a Platinum dbt Partner and two-times Fivetran Innovation Partner of the Year for EMEA.
@@ -78,4 +77,4 @@ We are also chatty, so:</br>
 #️⃣ Follow us on [LinkedIn](https://www.linkedin.com/company/infinite-lambda/) </br>
 👋🏼 Or just [get in touch](https://infinitelambda.com/contacts/)
 
-<img src="https://raw.githubusercontent.com/infinitelambda/cdn/main/GitHub-About%20section.png" alt="About IL" width="504" height="324">
+[<img src="https://raw.githubusercontent.com/infinitelambda/cdn/main/GitHub-About%20section.png" alt="About IL" width="504" height="324">](https://infinitelambda.com/)
