@@ -5,18 +5,23 @@
 
 # Snowflake Stage Inspector
 Stage Inspector helps you to analyse your Snowflake internal and external stages.
-
+You have two pages:
 ### Explorer
-- Surf through your stages, check the parameters
-- Get a list of files on your stages
-- Even you can manage your stage files: upload, download or remove them
+- Surf through your stages, check parameters
+- Get a list of the files on your stages
+- Even you can manage your stage files: upload, download or remove them (only internal stages)
 
 ### Usage
 - Overall size of your internal stages
 - Getting familiar your biggest files
-# Run this app
-This app based on the excellent Streamlit framework. 
-You can run it on the Streamlit Cloud 
+
+
+# Installation
+How can you run this app?
+This app based on the excellent [Streamlit framework](https://streamlit.io/).
+The best option is to run it on the [Streamlit Cloud](https://streamlit.io/cloud).
+
+If you rather choose to run it locally here is your guide.
 
 ## Create the virtual environment and install the packages
 So, first create your favorite virtual env and download the necessary packages. Streamlit will install among the other packages in the requirement.txt.
@@ -56,7 +61,21 @@ streamlit run Home.py
 ```
 
 
-# About
-We are [Infinite Lambda](https://infinitelambda.com/). 
-We are happy to help you, feel free to contact us!.
-Author: Gabor Toth.
+# License
+
+
+# About Infinite Lambda
+Infinite Lambda is a cloud and data consultancy. We build strategies, help organisations implement them and pass on the expertise to look after the infrastructure.
+
+We are an Elite Snowflake Partner, a Platinum dbt Partner and two-times Fivetran Innovation Partner of the Year for EMEA.
+
+Naturally, we love exploring innovative solutions and sharing knowledge, so go ahead and:
+
+🔧 Take a look around our [Git](https://github.com/infinitelambda) </br>
+✏️ Browse our [tech blog](https://infinitelambda.com/category/tech-blog/)
+
+We are also chatty, so:</br>
+#️⃣ Follow us on [LinkedIn](https://www.linkedin.com/company/infinite-lambda/) </br>
+👋🏼 Or just [get in touch](https://infinitelambda.com/contacts/)
+
+<img src="https://raw.githubusercontent.com/infinitelambda/cdn/main/GitHub-About%20section.png" alt="About IL" width="504" height="324">
