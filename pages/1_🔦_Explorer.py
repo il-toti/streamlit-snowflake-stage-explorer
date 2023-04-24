@@ -123,23 +123,25 @@ else:
     
     option_dl_file = columns_manage_files[0].selectbox(
             "Download a file:",
-            [ d["name"] for d in data_list_filtered ],
+            ["Select a file..."] + [ d["name"] for d in data_list_filtered ],
             label_visibility = "collapsed",
             key="file",
         )
     
-    columns_dlrm_files = columns_manage_files[0].columns([1,2])
-    f, filename = db.download_from_stage(session, option_dl_file, selected_stage_type, selected_stage)
-    columns_dlrm_files[0].download_button(
-                        label="Download",
-                        data=f,
-                        file_name=filename,
-                       )
-
-    button_remove_file = columns_dlrm_files[1].button("Remove file", on_click=ut.clear_checkbox_remove_file_confirm)
-    columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
-    if button_remove_file:
-        db.remove_from_stage(session, option_dl_file, selected_stage_type, selected_stage)
+    if option_dl_file and option_dl_file != "Select a file...":
+        columns_dlrm_files = columns_manage_files[0].columns([1,2])
+        f, filename = db.download_from_stage(session, option_dl_file, selected_stage_type, selected_stage)
+        columns_dlrm_files[0].download_button(
+                            label="Download",
+                            data=f,
+                            file_name=filename,
+                            key='dlbutton',
+                        )
+        print("dlbutton", st.session_state["dlbutton"])
+        button_remove_file = columns_dlrm_files[1].button("Remove file", on_click=ut.clear_checkbox_remove_file_confirm)
+        columns_dlrm_files[1].checkbox("Sure, remove it", key="remove_file_confirm", value=False)
+        if button_remove_file:
+            db.remove_from_stage(session, option_dl_file, selected_stage_type, selected_stage)
 
     # Upload a file
     cont = columns_manage_files[1].container()

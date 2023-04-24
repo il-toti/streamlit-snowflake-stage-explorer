@@ -10,7 +10,7 @@ from pathlib import Path
 @st.cache_resource
 def init_connection():
     return snowflake.connector.connect(
-        **st.secrets["snowflake"], client_session_keep_alive=True
+        **st.secrets["snowflake_stdemo"], client_session_keep_alive=True
     )
 
 

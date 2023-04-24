@@ -132,3 +132,4 @@ dmypy.json
 .streamlit/
 _work/
 tmp/
+.vscode/
