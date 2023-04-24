@@ -121,6 +121,7 @@ else:
     columns_manage_files = tab_files.columns(2)
     columns_manage_files[0].write("Manage file:")
     
+    # Create the dropdown box with a special "Select a file..." entry first
     option_dl_file = columns_manage_files[0].selectbox(
             "Download a file:",
             ["Select a file..."] + [ d["name"] for d in data_list_filtered ],
@@ -128,6 +129,7 @@ else:
             key="file",
         )
     
+    # Show the buttons if only it does make sense
     if option_dl_file and option_dl_file != "Select a file...":
         columns_dlrm_files = columns_manage_files[0].columns([1,2])
         f, filename = db.download_from_stage(session, option_dl_file, selected_stage_type, selected_stage)
